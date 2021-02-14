@@ -1,0 +1,11 @@
+#Django
+Django==3.1.6
+
+#Django rest framework
+djangorestframework==3.12.2
+
+#Database
+psycopg2==2.8.6
+
+# Environment
+django-environ==0.4.5
