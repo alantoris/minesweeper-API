@@ -13,7 +13,7 @@ from rest_framework.permissions import AllowAny,IsAuthenticated
 from users.permissions import IsAccountOwner
 
 # Serializers
-from users.serializers import UserModelSerializer, UserSignUpSerializer
+from users.serializers import UserModelSerializer, UserSignUpSerializer, UserLoginSerializer
 
 
 class UserViewSet(mixins.RetrieveModelMixin,
@@ -44,4 +44,16 @@ class UserViewSet(mixins.RetrieveModelMixin,
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         data = UserModelSerializer(user).data
+        return Response(data, status=status.HTTP_201_CREATED)
+    
+    @action(detail=False, methods=['post'])
+    def login(self, request):
+        """User sign in."""
+        serializer = UserLoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user, token = serializer.save()
+        data = {
+            'user': UserModelSerializer(user).data,
+            'access_token': token
+        }
         return Response(data, status=status.HTTP_201_CREATED)
