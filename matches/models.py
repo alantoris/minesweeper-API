@@ -30,6 +30,7 @@ class Match(BaseModel):
     FLAGGED = 'FLG'
     UNKNOWN = 'UNK'
     DISCOVERED = 'DIS'
+    EXPLOITED = 'EXP'
 
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True) 
     creator = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -60,8 +61,16 @@ class Match(BaseModel):
             for j in range(width):
                 row.append({
                     'mined': index in random_index,
-                    'state': cls.UNCLICKED
+                    'state': cls.UNCLICKED,
+                    'numer': None
                 }) 
                 index = index + 1
             board.append(row)
         return json.dumps(board)
+    
+    def readeable_board(self):
+        board = json.loads(self.board)
+        for x in board:
+            for y in x:
+                y.pop('mined')
+        return board
