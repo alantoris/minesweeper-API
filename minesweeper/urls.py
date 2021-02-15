@@ -9,4 +9,5 @@ urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
 
     path('', include(('users.urls', 'users'), namespace='users')),
+    path('', include(('matches.urls', 'matches'), namespace='matches')),
 ]

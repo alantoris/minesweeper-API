@@ -46,7 +46,7 @@ THIRD_PARTY_APPS = [
     'rest_framework.authtoken',
 ]
 
-LOCAL_APPS = []
+LOCAL_APPS = ['users','matches']
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
@@ -151,3 +151,13 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 10,
 }
+
+#App default values
+BOARD_MINES_DEFAULT = env('BOARD_MINES_DEFAULT', default=20)
+BOARD_WIDTH_DEFAULT = env('BOARD_WIDTH_DEFAULT', default=20)
+BOARD_HEIGHT_DEFAULT = env('BOARD_HEIGHT_DEFAULT', default=20)
+
+BOARD_MIN_WIDTH = env('BOARD_MIN_WIDTH', default=10)
+BOARD_MAX_WIDTH = env('BOARD_MAX_WIDTH', default=100)
+BOARD_MIN_HEIGHT = env('BOARD_MIN_HEIGHT', default=10)
+BOARD_MAX_HEIGHT = env('BOARD_MAX_HEIGHT', default=100)

@@ -9,3 +9,6 @@ psycopg2==2.8.6
 
 # Environment
 django-environ==0.4.5
+
+# Numpy
+numpy==1.20.1
