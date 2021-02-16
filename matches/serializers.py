@@ -46,7 +46,10 @@ class MatchModelSerializer(serializers.ModelSerializer):
         board = Match.create_board(data['width'], data['height'], data['mines'])
         match = Match.objects.create(
             creator=data['creator'],
-            board=board
+            board=board,
+            mines = data['mines'],
+            width = data['width'],
+            height = data['height']
         )
         return match
     
