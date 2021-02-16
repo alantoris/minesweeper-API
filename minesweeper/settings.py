@@ -44,6 +44,7 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders'
 ]
 
 LOCAL_APPS = ['users','matches']
@@ -53,6 +54,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -161,3 +163,8 @@ BOARD_MIN_WIDTH = env('BOARD_MIN_WIDTH', default=10)
 BOARD_MAX_WIDTH = env('BOARD_MAX_WIDTH', default=100)
 BOARD_MIN_HEIGHT = env('BOARD_MIN_HEIGHT', default=10)
 BOARD_MAX_HEIGHT = env('BOARD_MAX_HEIGHT', default=100)
+
+#CORS settings
+CORS_ORIGIN_ALLOW_ALL = False
+
+CORS_ORIGIN_WHITELIST = [env('FRONTEND_URL', default='http://127.0.0.1:3000')]

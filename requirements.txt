@@ -1,6 +1,9 @@
 #Django
 Django==3.1.6
 
+#Django cors
+django-cors-headers==3.7.0
+
 #Django rest framework
 djangorestframework==3.12.2
 
