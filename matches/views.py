@@ -18,6 +18,7 @@ from matches.serializers import MatchModelSerializer, ClickCellSerializer
 
 
 class MatchViewSet(mixins.CreateModelMixin,
+                    mixins.RetrieveModelMixin,
                     viewsets.GenericViewSet):
     """Match view set.
 
@@ -25,18 +26,6 @@ class MatchViewSet(mixins.CreateModelMixin,
     """
     serializer_class = MatchModelSerializer
     lookup_field = 'uuid'
-
-    def dispatch(self, request, *args, **kwargs):
-        """Verify that the match exists."""
-        uuid = kwargs['uuid']
-        self.match = get_object_or_404(Match, uuid=uuid)
-        return super(MatchViewSet, self).dispatch(request, *args, **kwargs)
-    
-    def get_serializer_context(self):
-        """Add match to serializer context."""
-        context = super(MatchViewSet, self).get_serializer_context()
-        context['match'] = self.match
-        return context
 
     def get_queryset(self):
         filters = { 'creator': self.request.user }
@@ -53,9 +42,9 @@ class MatchViewSet(mixins.CreateModelMixin,
         return [p() for p in permissions]
     
     @action(detail=True, methods=['post'])
-    def click(self, request, *args, **kwargs):
+    def click(self, request, uuid, *args, **kwargs):
         """Change the state of a cell."""
-        match = self.get_object()
+        match = get_object_or_404(Match, uuid=uuid)
         serializer = ClickCellSerializer(
             match,
             data=request.data,
