@@ -49,7 +49,9 @@ class MatchModelSerializer(serializers.ModelSerializer):
             board=board,
             mines = data['mines'],
             width = data['width'],
-            height = data['height']
+            height = data['height'],
+            remaining_flags = data['mines'],
+            remaining_free_cells=data['width']*data['height'] - data['mines']
         )
         return match
     
@@ -81,15 +83,17 @@ class ClickCellSerializer(serializers.Serializer):
             raise serializers.ValidationError("The field 'col' is required")
         
         if 'state' in data:
-            if data['state'] not in [Match.FLAGGED, Match.UNKNOWN, Match.DISCOVERED]:
+            if data['state'] not in [Match.FLAGGED, Match.UNKNOWN, Match.DISCOVERED, Match.UNCLICKED]:
                 raise serializers.ValidationError("Invalidad state. Possible values: {} {} {}".format(
-                                                Match.FLAGGED, Match.UNKNOWN, Match.DISCOVERED)
+                                                Match.FLAGGED, Match.UNKNOWN, Match.DISCOVERED, Match.UNCLICKED)
                                                 )
+            if data['state'] == Match.FLAGGED and match.remaining_flags == 0:
+                raise serializers.ValidationError("No more flags left")
         else:
             raise serializers.ValidationError("The field 'state' is required")
             
         board = json.loads(match.board)
-        if board[data['col']][data['row']]['state'] != Match.UNCLICKED:
+        if board[data['col']][data['row']]['state'] in [Match.DISCOVERED, Match.EXPLOITED]:
             raise serializers.ValidationError("The cell was already discovered")
 
         return data
@@ -100,18 +104,27 @@ class ClickCellSerializer(serializers.Serializer):
         row = data['row']
         board = json.loads(instance.board)
         cell = board[col][row]
+
+        if data['state'] != Match.FLAGGED and board[col][row]['state'] == Match.FLAGGED:
+            instance.remaining_flags = instance.remaining_flags + 1
+        
         if data['state'] == Match.FLAGGED:
             board[col][row]['state'] = Match.FLAGGED
-            #TODO: Posibily to count remaining flags
+            instance.remaining_flags = instance.remaining_flags - 1
         elif data['state'] == Match.UNKNOWN:
             board[col][row]['state'] = Match.UNKNOWN
+        elif data['state'] == Match.UNCLICKED:
+            board[col][row]['state'] = Match.UNCLICKED
         elif data['state'] == Match.DISCOVERED and cell['mined']:
             board[col][row]['state'] = Match.EXPLOITED
-            instance.state(Match.FAILED)
+            instance.state = Match.FAILED
         elif data['state'] == Match.DISCOVERED and not cell['mined']:
             board[col][row]['state'] = Match.DISCOVERED
-            #TODO: Discover the cell around and set 'number' field into cells
-            #TODO: Check if the game is over
+            board, _, cells_discovered = instance.discover_around(board, col, row)
+            instance.remaining_free_cells = instance.remaining_free_cells - cells_discovered
+            if instance.remaining_free_cells == 0:
+                instance.state = Match.SUCCESSFUL
+
         instance.board = json.dumps(board)
         instance.save()
         return instance

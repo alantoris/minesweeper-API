@@ -43,6 +43,8 @@ class Match(BaseModel):
     height = models.PositiveIntegerField(
         default=settings.BOARD_HEIGHT_DEFAULT, 
         validators=[MinValueValidator(settings.BOARD_MIN_HEIGHT), MaxValueValidator(settings.BOARD_MAX_HEIGHT)])
+    remaining_flags = models.PositiveIntegerField(default=settings.BOARD_MINES_DEFAULT)
+    remaining_free_cells = models.PositiveIntegerField(default=settings.BOARD_HEIGHT_DEFAULT*settings.BOARD_WIDTH_DEFAULT-settings.BOARD_MINES_DEFAULT)
     
     def __str__(self):
         return "{}: {}".format(self.uuid, self.state)
@@ -62,7 +64,7 @@ class Match(BaseModel):
                 row.append({
                     'mined': index in random_index,
                     'state': cls.UNCLICKED,
-                    'numer': None
+                    'number': None
                 }) 
                 index = index + 1
             board.append(row)
@@ -74,3 +76,28 @@ class Match(BaseModel):
             for y in x:
                 y.pop('mined')
         return board
+    
+    def discover_around(self, board, col, row, checked_cells=[], cells_discovered=0):
+        """Recursively discover cells to free """
+        board[col][row]['state'] = Match.DISCOVERED
+        cells_discovered = cells_discovered + 1
+        around_coordinates = []
+        mines_around = 0
+        for c in range(col - 1, col + 2):
+            if c < 0 or c >= self.width:
+                continue
+            for r in range(row - 1, row + 2):
+                if (r < 0 or r >= self.height) or ((c,r) in checked_cells) or (c == col and r == row):
+                    continue
+                if board[c][r]['mined']:
+                    mines_around = mines_around + 1
+                else:
+                    around_coordinates.append((c,r))
+        if mines_around > 0:
+            board[col][row]['number'] = mines_around
+            return board, checked_cells, cells_discovered
+        else:
+            already_checked = around_coordinates + checked_cells + [(col,row)]
+            for cell in around_coordinates:
+                board, already_checked, cells_discovered = self.discover_around(board, cell[0], cell[1], already_checked, cells_discovered)
+            return board, already_checked, cells_discovered
