@@ -36,15 +36,13 @@ class Match(BaseModel):
     creator = models.ForeignKey(User, on_delete=models.CASCADE)
     state = models.CharField(max_length=2, choices=STATE_CHOICES, default=IN_PROGRESS)
     board = models.JSONField(null=True, blank=True)
-    mines = models.PositiveIntegerField(default=settings.BOARD_MINES_DEFAULT)
+    mines = models.PositiveIntegerField()
     width = models.PositiveIntegerField(
-        default=settings.BOARD_WIDTH_DEFAULT, 
         validators=[MinValueValidator(settings.BOARD_MIN_WIDTH), MaxValueValidator(settings.BOARD_MAX_WIDTH)])
     height = models.PositiveIntegerField(
-        default=settings.BOARD_HEIGHT_DEFAULT, 
         validators=[MinValueValidator(settings.BOARD_MIN_HEIGHT), MaxValueValidator(settings.BOARD_MAX_HEIGHT)])
-    remaining_flags = models.PositiveIntegerField(default=settings.BOARD_MINES_DEFAULT)
-    remaining_free_cells = models.PositiveIntegerField(default=settings.BOARD_HEIGHT_DEFAULT*settings.BOARD_WIDTH_DEFAULT-settings.BOARD_MINES_DEFAULT)
+    remaining_flags = models.PositiveIntegerField()
+    remaining_free_cells = models.PositiveIntegerField()
     
     def __str__(self):
         return "{}: {}".format(self.uuid, self.state)

@@ -24,7 +24,7 @@ class MatchModelSerializer(serializers.ModelSerializer):
 
         model = Match
         exclude = ('id', )
-        read_only_fields = ('board',)
+        read_only_fields = ('board','remaining_flags','remaining_free_cells')
     
     def get_board(self, obj):
         return obj.readeable_board()
