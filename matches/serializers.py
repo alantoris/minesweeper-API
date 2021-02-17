@@ -54,6 +54,16 @@ class MatchModelSerializer(serializers.ModelSerializer):
             remaining_free_cells=data['width']*data['height'] - data['mines']
         )
         return match
+
+
+class ListModelSerializer(serializers.ModelSerializer):
+    """Match model serializer."""
+
+    class Meta:
+        """Meta class."""
+
+        model = Match
+        exclude = ('id', 'board')
     
 
 class ClickCellSerializer(serializers.Serializer):

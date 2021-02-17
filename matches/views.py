@@ -14,11 +14,12 @@ from rest_framework.permissions import IsAuthenticated
 from matches.permissions import IsMatchCreator
 
 # Serializers
-from matches.serializers import MatchModelSerializer, ClickCellSerializer
+from matches.serializers import MatchModelSerializer, ClickCellSerializer, ListModelSerializer
 
 
 class MatchViewSet(mixins.CreateModelMixin,
                     mixins.RetrieveModelMixin,
+                    mixins.ListModelMixin,
                     viewsets.GenericViewSet):
     """Match view set.
 
@@ -26,6 +27,11 @@ class MatchViewSet(mixins.CreateModelMixin,
     """
     serializer_class = MatchModelSerializer
     lookup_field = 'uuid'
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return ListModelSerializer
+        return self.serializer_class
 
     def get_queryset(self):
         filters = { 'creator': self.request.user }
