@@ -9,9 +9,13 @@ djangorestframework==3.12.2
 
 #Database
 psycopg2==2.8.6
+dj-database-url==0.5.0
 
 # Environment
 django-environ==0.4.5
 
 # Numpy
-numpy==1.20.1
+numpy==1.19.5
+
+# Gunicorn
+gunicorn==20.0.4
