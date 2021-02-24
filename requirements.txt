@@ -13,6 +13,7 @@ dj-database-url==0.5.0
 
 # Environment
 django-environ==0.4.5
+python-decouple==3.4
 
 # Numpy
 numpy==1.19.5
