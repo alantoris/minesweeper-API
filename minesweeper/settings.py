@@ -25,9 +25,9 @@ SECRET_KEY = env('DJANGO_SECRET_KEY')
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DJANGO_DEBUG', default=False)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -89,8 +89,10 @@ WSGI_APPLICATION = 'minesweeper.wsgi.application'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 # DATABASES
+import dj_database_url
+from decouple import config
 DATABASES = {
-    'default': env.db('DATABASE_URL'),
+    'default': dj_database_url.config(default=config('DATABASE_URL')),
 }
 
 # Password validation
