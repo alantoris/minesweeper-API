@@ -20,3 +20,6 @@ numpy==1.19.5
 
 # Gunicorn
 gunicorn==20.0.4
+
+# Static files
+whitenoise==5.2.0
