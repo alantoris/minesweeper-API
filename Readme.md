@@ -18,3 +18,9 @@ Local deploy:
 
     - Send command to django api:  `docker-compose -f local.yml run --rm django <COMMAND>`
     - Run tests: `docker-compose -f local.yml run --rm django python manage.py test`
+
+
+Heroku deploy:
+
+- The API is deployed in https://at-minesweeper-api.herokuapp.com
+- It can be accessed from a React UI deployed at https://at-minesweeper-ui.herokuapp.com 
